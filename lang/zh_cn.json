@@ -1,0 +1,13 @@
+{
+    "welcome":"========================================================\nEdgeGPT 原项目 github.com/acheong08/EdgeGPT\n注意 目前GUI还并不完善 比如无法显示emoji等 还请见谅\n有时 可能由于网络问题导致出现错误 重启程序即可\n========================================================\n\nYou:\n" ,
+    "network_error_message" : "网络错误\n可能是各种奇怪原因造成的\n你可以尝试试继续对话\n若还不行那请尝试重启程序" ,
+    "can_not_to_read" : "无法正常读取 'cookies.json' \n看看是否忘记添加\n或有其它问题" ,
+    "empty_content" : "禁止输入空内容" ,
+    "words_too_more" : "超过2000字" ,
+    "network_error" : "网络错误" ,
+    "wait" : "请等待Bing" ,
+    "wrong" : "错误" ,
+    "send" : "发送" ,
+    "info" : "提示" ,
+    "word" : "字数"
+}
