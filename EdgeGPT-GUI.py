@@ -4,22 +4,24 @@ import tkinter as tk
 import threading
 import warnings
 import locale
+import json
 import time
 import pip
+import os
+
+is_windows = os.name == "nt"
 
 while 1 :
     try:
-        import ttkbootstrap as ttk
+        if is_windows : import ttkbootstrap as ttk
         import EdgeGPT #EdgeGPT 原地址 https://github.com/acheong08/EdgeGPT
         import emoji
         break
     except:
-        pip.main( [ "install" , "ttkbootstrap" ] )
+        if is_windows : pip.main( [ "install" , "ttkbootstrap" ] )
         pip.main( [ "install" , "EdgeGPT" ] )
         pip.main( [ "install" , "emoji" ] )
 
-json = EdgeGPT.json
-os = EdgeGPT.os
 
 warnings.filterwarnings("ignore",category=DeprecationWarning)
 
@@ -31,12 +33,15 @@ language_file = "lang/" + language_file
 with open( language_file , "r" , encoding = "utf-8" ) as lang_file : language = json.load(lang_file)
 
 font = ( "Arial" , 14 , "bold" )
-root = ttk.Window()
+if is_windows :
+    root = ttk.Window()
+    root.attributes( "-toolwindow" , 2 ) #只保留退出键
+else:
+    root = tk.Tk()
 root.geometry( "1200x800" )
 root.title( "EdgeGPT-GUI" )
-root.attributes( "-toolwindow" , 2 ) #只保留退出键
-can_chat = True #确保用户不会在Bing回答时输入内容a
-root.resizable ( 0 , 233333333 ) #禁止横向拉长窗口 你问我既然可以竖向拉为什么不能横向拉? 因为有BUG _(:з」∠)_
+can_chat = True #确保用户不会在Bing回答时输入内容
+root.resizable ( 0 , 233333333 ) #禁止横向拉长窗口
 root.update()
 
 File_name = str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) + ".md" #储存对话
