@@ -7,7 +7,19 @@
 </p>
 
 <p align="center">
-  <img alt="Python version" src="https://img.shields.io/badge/python-3.8+-blue.svg">
+    <a href="https://www.python.org">
+        <img alt="Python version" src="https://img.shields.io/badge/python-3.8+-blue">
+    </a>
+    <a href="https://opensource.org/license/gpl-3-0/">
+        <img alt="license" src="https://img.shields.io/badge/license-GPL3.0-blue">
+    </a>
+    <a href="https://github.com/cueavyqwp/EdgeGPT-GUI">
+        <img alt="Github stars" src="https://img.shields.io/github/stars/cueavyqwp/langful?color=blue">
+    </a>
+    <a href="https://github.com/cueavyqwp/EdgeGPT-GUI">
+        <img alt="Github issues" src="https://img.shields.io/github/issues/cueavyqwp/langful?color=blue">
+    </a>
+
 </p>
 
 </div>
