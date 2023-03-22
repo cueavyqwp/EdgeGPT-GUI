@@ -14,10 +14,10 @@
         <img alt="license" src="https://img.shields.io/badge/license-GPL3.0-blue">
     </a>
     <a href="https://github.com/cueavyqwp/EdgeGPT-GUI">
-        <img alt="Github stars" src="https://img.shields.io/github/stars/cueavyqwp/langful?color=blue">
+        <img alt="Github stars" src="https://img.shields.io/github/stars/cueavyqwp/EdgeGPT-GUI?color=blue">
     </a>
     <a href="https://github.com/cueavyqwp/EdgeGPT-GUI">
-        <img alt="Github issues" src="https://img.shields.io/github/issues/cueavyqwp/langful?color=blue">
+        <img alt="Github issues" src="https://img.shields.io/github/issues/cueavyqwp/EdgeGPT-GUI?color=blue">
     </a>
 
 </p>
