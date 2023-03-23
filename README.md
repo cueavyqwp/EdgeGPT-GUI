@@ -32,6 +32,7 @@
 
 - python 3.8+
 - 通过 [候补名单](http://bing.com/chat)
+- 网络代理 具体见 [#178](https://github.com/acheong08/EdgeGPT/issues/178)
 
 ### 获取Cookie文件
 
@@ -52,11 +53,13 @@
 
 ## 说明
 
-按 `F5` 进行发送
+按 `F9` 进行发送
 
 按 `F12` 来开启新话题
 
 对话会以 `Markdown` 文件的形式进行储存
+
+因代理的问题 所以可能会暂停更新
 
 ## 反馈
 

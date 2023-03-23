@@ -9,8 +9,8 @@ import pip
 
 while 1 :
     try:
-        import langful
         import EdgeGPT #https://github.com/acheong08/EdgeGPT
+        import langful
         break
     except:
         pip.main( [ "install" , "langful" ] )
@@ -39,6 +39,8 @@ try:
 except:
     tkmsg.showerror( lang.replace( "wrong" ) , lang.get( "can_not_to_read" ) )
     exit()
+
+with open( 'cookies.json', 'r' ) as f : cookies = json.load( f )
 
 bot = bot = EdgeGPT.Chatbot( cookies = cookies )
 loop = EdgeGPT.asyncio.get_event_loop()
@@ -73,10 +75,7 @@ You:
 def show_count( *args ): #统计字数
     global the_text
     the_text = text.get( "1.0" , "end" ) [:-1]
-    language_word = lang.get( "word" )
-    language_f5_send = lang.get( "f5_send" )
-    language_f12_reload = lang.get( "f12_reload" )
-    root.title( f"EdgeGPT-GUI [ { language_word } 2000/{ len( the_text ) } ] [ { language_f5_send } ] [ { language_f12_reload } ]" )
+    root.title( lang.replace ( f"EdgeGPT-GUI [ %word% 2000/{ len( the_text ) } ] [ %f9_send% ] [ %f12_reload% ]" ) )
     root.after( 1 , show_count )
 
 def add_chat_message( message , enter = True ): #往聊天内容里添加内容
@@ -131,12 +130,8 @@ chat_text = tkinter.scrolledtext.ScrolledText(
     )
 
 add_chat_message( lang.replace(
-f"""{ '=' * 60 }
-%welcome%
-{ '=' * 60 }
-
-{ '-' * 60 }
-%f5_send%
+f"""{ '-' * 60 }
+%f9_send%
 %f12_reload%
 { '-' * 60 }
 
@@ -154,7 +149,7 @@ text = tkinter.scrolledtext.ScrolledText(
 
 text.pack(side=tk.BOTTOM , anchor=tk.SW)
 
-text.bind( "<F5>" , send ) #绑定事件
+text.bind( "<F9>" , send ) #绑定事件
 text.bind( "<F12>" , reset ) #绑定事件
 
 chat_text.pack(side=tk.TOP , anchor=tk.N)
