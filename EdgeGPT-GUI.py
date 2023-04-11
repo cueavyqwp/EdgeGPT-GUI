@@ -1,4 +1,4 @@
-import tkinter.messagebox as tkmsg 
+import tkinter.messagebox as tkmsg
 import tkinter.scrolledtext
 import tkinter as tk
 import traceback
@@ -13,8 +13,8 @@ while 1 :
         import langful
         break
     except:
-        pip.main( [ "install" , "langful" ] )
-        pip.main( [ "install" , "EdgeGPT" ] )
+        pip.main( [ "install" , "langful==0.17" ] )
+        pip.main( [ "install" , "EdgeGPT==0.1.4" ] )
 
 lang = langful.lang()
 
