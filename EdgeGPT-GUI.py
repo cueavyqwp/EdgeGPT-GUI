@@ -6,6 +6,7 @@ import threading
 import json
 import time
 import pip
+import os
 
 while 1 :
     try:
@@ -13,8 +14,8 @@ while 1 :
         import langful
         break
     except:
-        pip.main( [ "install" , "langful==0.17" ] )
-        pip.main( [ "install" , "EdgeGPT==0.1.4" ] )
+        pip.main( [ "install" , "langful==0.24" ] )
+        pip.main( [ "install" , "EdgeGPT==0.2.1" ] )
 
 lang = langful.lang()
 
@@ -24,9 +25,13 @@ root.geometry( "1200x800" )
 root.title( "EdgeGPT-GUI" )
 can_chat = True #确保用户不会在Bing回答时输入内容
 root.update()
+cookies = "cookies.json"
+logs = "logs"
 
-File_name = str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) + ".md" #储存对话
-def log_time():
+if not os.path.exists( logs ) : #文件夹不存在就创建
+    os.mkdir( logs )
+File_name = os.path.join( logs , str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) + ".md" ) #储存对话
+def log_time() :
     with open( File_name , "a" , encoding = "utf-8" ) as File :
         Now_time = time.strftime( "%Y-%m-%d %H:%M:%S" , time.localtime() )
         File.write( f"___\n\n# `{Now_time}`\n\n" )
@@ -35,14 +40,13 @@ log_time()
 
 #测试能否读取cookie文件
 try:
-    with open( 'cookies.json', 'r' ) as f : cookies = json.load( f )
+    with open( cookies , 'r' ) as f :
+        json.load( f )
 except:
-    tkmsg.showerror( lang.replace( "wrong" ) , lang.get( "can_not_to_read" ) )
+    tkmsg.showerror( lang.str_replace( "wrong" ) , lang.get( "can_not_to_read" ) )
     exit()
 
-with open( 'cookies.json', 'r' ) as f : cookies = json.load( f )
-
-bot = bot = EdgeGPT.Chatbot( cookies = cookies )
+bot = EdgeGPT.Chatbot( cookie_path = cookies )
 loop = EdgeGPT.asyncio.get_event_loop()
 loop_thread = threading.Thread( target = loop.run_forever )
 loop_thread.start()
@@ -54,12 +58,12 @@ the_chat_text = ""
 def reset( *args ) :
     global bot , loop , loop_thread
     if can_chat :
-        bot = EdgeGPT.Chatbot( cookies = cookies )
+        bot = EdgeGPT.Chatbot( cookie_path = cookies )
         loop.call_soon_threadsafe( loop.stop )
         loop = EdgeGPT.asyncio.get_event_loop()
         loop_thread = threading.Thread( target = loop.run_forever )
         loop_thread.start()
-        add_chat_message( lang.replace(
+        add_chat_message( lang.str_replace(
 f"""{ '=' * 60 }
 %new_topic%
 { '=' * 60 }
@@ -75,7 +79,7 @@ You:
 def show_count( *args ): #统计字数
     global the_text
     the_text = text.get( "1.0" , "end" ) [:-1]
-    root.title( lang.replace ( f"EdgeGPT-GUI [ %word% 2000/{ len( the_text ) } ] [ %f9_send% ] [ %f12_reload% ]" ) )
+    root.title( lang.str_replace ( f"EdgeGPT-GUI [ %word% 2000/{ len( the_text ) } ] [ %f9_send% ] [ %f12_reload% ]" ) )
     root.after( 1 , show_count )
 
 def add_chat_message( message , enter = True ): #往聊天内容里添加内容
@@ -129,7 +133,7 @@ chat_text = tkinter.scrolledtext.ScrolledText(
     font = font
     )
 
-add_chat_message( lang.replace(
+add_chat_message( lang.str_replace(
 f"""{ '-' * 60 }
 %f9_send%
 %f12_reload%

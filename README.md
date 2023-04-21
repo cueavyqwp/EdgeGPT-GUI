@@ -32,7 +32,7 @@
 
 - python 3.8+
 - 通过 [候补名单](http://bing.com/chat)
-- 网络代理 具体见 [#178](https://github.com/acheong08/EdgeGPT/issues/178)
+- ~~网络代理 具体见 [#178](https://github.com/acheong08/EdgeGPT/issues/178)~~(貌似现在不需要了)
 
 ### 获取Cookie文件
 
@@ -61,7 +61,9 @@
 
 >~~因代理的问题 所以可能会暂停更新~~
 
-项目已寄 欢迎烧纸
+>~~项目已寄 欢迎烧纸~~
+
+项目正常更新
 
 ## 反馈
 
