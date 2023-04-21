@@ -14,8 +14,8 @@ while 1 :
         import langful
         break
     except:
-        pip.main( [ "install" , "langful==0.24" ] )
-        pip.main( [ "install" , "EdgeGPT==0.2.1" ] )
+        pip.main( [ "install" , "langful" ] )
+        pip.main( [ "install" , "EdgeGPT" ] )
 
 lang = langful.lang()
 
