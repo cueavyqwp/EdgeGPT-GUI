@@ -1,15 +1,13 @@
 {
     "network_error_message" : "Network error.\nYou can try to continue.\nIf it still can't work, please try to restart this program." ,
     "can_not_to_read" : "Unable to read 'cookies.json' file" ,
+    "help" : "{}Pass F9 to send{}Pass F12 to reload{}" ,
     "empty_content" : "Do not enter empty content" ,
     "words_too_more" : "More than 2000 words" ,
-    "f12_reload" : "Pass F12 to reload" ,
     "network_error" : "Network error" ,
-    "f9_send" : "Pass F9 to send" ,
-    "new_topic" : "new topic" ,
+    "new_topic" : "{}new topic{}" ,
     "wait" : "Please wait" ,
     "wrong" : "Wrong" ,
-    "send" : "Send" ,
     "info" : "Info" ,
     "word" : "word"
 }

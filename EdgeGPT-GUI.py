@@ -17,7 +17,7 @@ while 1 :
         pip.main( [ "install" , "langful" ] )
         pip.main( [ "install" , "EdgeGPT" ] )
 
-lang = langful.lang()
+lang = langful.lang( change = "{}" )
 
 font = ( "Consolas" , 18 , "bold" )
 root = tk.Tk()
@@ -34,7 +34,7 @@ File_name = os.path.join( logs , str( time.strftime( "%Y-%m-%d" , time.localtime
 def log_time() :
     with open( File_name , "a" , encoding = "utf-8" ) as File :
         Now_time = time.strftime( "%Y-%m-%d %H:%M:%S" , time.localtime() )
-        File.write( f"___\n\n# `{Now_time}`\n\n" )
+        File.write( f"""\n___\n\n# `{Now_time}`\n""" )
 
 log_time()
 
@@ -63,15 +63,8 @@ def reset( *args ) :
         loop = EdgeGPT.asyncio.get_event_loop()
         loop_thread = threading.Thread( target = loop.run_forever )
         loop_thread.start()
-        add_chat_message( lang.str_replace(
-f"""{ '=' * 60 }
-%new_topic%
-{ '=' * 60 }
-
-You:
-"""
-    )
-        )
+        add_chat_message( lang.replace( "new_topic" , [ f"{ '=' * 60 }\n" , f"\n{ '=' * 60 }\n" ] ) )
+        message_user()
         log_time()
     else :
         tkmsg.showinfo( lang.get( "info" ) , lang.get( "wait" ) )
@@ -79,7 +72,7 @@ You:
 def show_count( *args ): #统计字数
     global the_text
     the_text = text.get( "1.0" , "end" ) [:-1]
-    root.title( lang.str_replace ( f"EdgeGPT-GUI [ %word% 2000/{ len( the_text ) } ] [ %f9_send% ] [ %f12_reload% ]" ) )
+    root.title( lang.str_replace ( f"EdgeGPT-GUI [ { lang.get( 'word' ) } 2000/{ len( the_text ) } ] " + lang.replace( "help" , [ "[ " , " ] [ " , " ]" ] ) ) )
     root.after( 1 , show_count )
 
 def add_chat_message( message , enter = True ): #往聊天内容里添加内容
@@ -93,8 +86,9 @@ def Bing_s_message( future ):
     try :
         message = future.result() ["item"] ["messages"] [1] ["adaptiveCards"] [0] ["body"] [0] ["text"]
         with open( File_name , "a" , encoding = "utf-8" ) as File :
-            File.write( f"## `Bing`\n\n___\n\n{message}\n\n" )
-        add_chat_message( f"{message}\nUser:\n" )
+            File.write( f"""\n## `Bing`\n\n___\n\n{message}""" )
+        add_chat_message( f"{message}" )
+        message_user()
     except Exception as error :
         print( '=' * 60 )
         traceback.print_exc()
@@ -114,12 +108,20 @@ def send( *args ):
     elif len( the_text ) <= 2000 and can_chat :
         can_chat = False
         with open( File_name , "a" , encoding = "utf-8" ) as File :
-            File.write( f"___\n\n## `User`\n\n___\n\n{the_text}\n___\n\n" )
-        add_chat_message( f"{the_text}\n\nBing:\n" )
+            File.write( f"""\n___\n\n## `User`\n\n___\n\n{the_text}\n\n___\n""" )
+
+        add_chat_message( f"{the_text}" )
+        message_bing()
         the_text_old = the_text
         text.delete(0.0,"end")
         future = EdgeGPT.asyncio.run_coroutine_threadsafe( ask() , loop )
         future.add_done_callback( Bing_s_message )
+
+def message_user() :
+    add_chat_message( "User:\n" )
+
+def message_bing() :
+    add_chat_message( "\nBing:\n" )
 
 async def ask( *args ) : return await bot.ask( prompt = the_text )
 
@@ -133,14 +135,8 @@ chat_text = tkinter.scrolledtext.ScrolledText(
     font = font
     )
 
-add_chat_message( lang.str_replace(
-f"""{ '-' * 60 }
-%f9_send%
-%f12_reload%
-{ '-' * 60 }
-
-You:
-"""))
+add_chat_message( lang.replace( "help" , [ f"{ '-' * 60 }\n" , "\n" , f"\n{ '-' * 60 }" ] ) + "\n" )
+message_user()
 
 text = tkinter.scrolledtext.ScrolledText(
     root ,
@@ -153,8 +149,9 @@ text = tkinter.scrolledtext.ScrolledText(
 
 text.pack(side=tk.BOTTOM , anchor=tk.SW)
 
-text.bind( "<F9>" , send ) #绑定事件
+text.bind( "<Shift-Return>" , send ) #绑定事件
 text.bind( "<F12>" , reset ) #绑定事件
+text.bind( "<F9>" , send ) #绑定事件
 
 chat_text.pack(side=tk.TOP , anchor=tk.N)
 
