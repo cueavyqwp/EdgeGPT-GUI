@@ -111,7 +111,7 @@ def send( *args ):
             File.write( f"""\n___\n\n## `User`\n\n___\n\n{the_text}\n\n___\n""" )
 
         add_chat_message( f"{the_text}" )
-        message_bing()
+        add_chat_message( "\nBing:\n" )
         the_text_old = the_text
         text.delete(0.0,"end")
         future = EdgeGPT.asyncio.run_coroutine_threadsafe( ask() , loop )
@@ -119,9 +119,6 @@ def send( *args ):
 
 def message_user() :
     add_chat_message( "User:\n" )
-
-def message_bing() :
-    add_chat_message( "\nBing:\n" )
 
 async def ask( *args ) : return await bot.ask( prompt = the_text )
 
@@ -148,13 +145,11 @@ text = tkinter.scrolledtext.ScrolledText(
     )
 
 text.pack(side=tk.BOTTOM , anchor=tk.SW)
+chat_text.pack(side=tk.TOP , anchor=tk.N)
 
 text.bind( "<Shift-Return>" , send ) #绑定事件
 text.bind( "<F12>" , reset ) #绑定事件
 text.bind( "<F9>" , send ) #绑定事件
-
-chat_text.pack(side=tk.TOP , anchor=tk.N)
-
 
 root.after( 1 , show_count )
 
