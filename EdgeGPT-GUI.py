@@ -3,6 +3,7 @@ import tkinter.scrolledtext
 import tkinter as tk
 import traceback
 import threading
+import logging
 import json
 import time
 import pip
@@ -17,43 +18,53 @@ while 1 :
         pip.main( [ "install" , "langful" ] )
         pip.main( [ "install" , "EdgeGPT" ] )
 
-lang = langful.lang( change = "{}" )
-
+#=========================================
 font = ( "Consolas" , 18 , "bold" )
+cookies = "cookies.json"
+chat_logs = "chat_logs"
+logs = "logs"
+#=========================================
+
+if not os.path.exists( logs ) :
+    os.mkdir( logs )
+if not os.path.exists( chat_logs ) :
+    os.mkdir( chat_logs )
+
+can_chat = True #确保用户不会在Bing回答时输入内容
 root = tk.Tk()
 root.geometry( "1200x800" )
 root.title( "EdgeGPT-GUI" )
-can_chat = True #确保用户不会在Bing回答时输入内容
-root.update()
-cookies = "cookies.json"
-logs = "logs"
 
-if not os.path.exists( logs ) : #文件夹不存在就创建
-    os.mkdir( logs )
-File_name = os.path.join( logs , str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) + ".md" ) #储存对话
-def log_time() :
-    with open( File_name , "a" , encoding = "utf-8" ) as File :
-        Now_time = time.strftime( "%Y-%m-%d %H:%M:%S" , time.localtime() )
-        File.write( f"""\n___\n\n# `{Now_time}`\n""" )
+file_name = os.path.join( str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) ) # 日志与聊天记录的文件名称
+logs_name = os.path.join( logs , file_name + ".log" )
+chat_logs_name = os.path.join( chat_logs , file_name + ".md" )
 
-log_time()
+logging.basicConfig(
+    filename = logs_name ,
+    filemode = "a" ,
+    level = logging.NOTSET ,
+    format = "[%(asctime)s] [%(levelname)s] %(message)s" ,
+    datefmt = "%Y-%m-%d %H:%M:%S"
+    )
 
-#测试能否读取cookie文件
-try:
-    with open( cookies , 'r' ) as f :
-        json.load( f )
-except:
+lang = langful.lang( change = "@" )
+
+try :
+    bot = EdgeGPT.Chatbot( cookie_path = cookies )
+except json.decoder.JSONDecodeError :
     tkmsg.showerror( lang.str_replace( "wrong" ) , lang.get( "can_not_to_read" ) )
-    exit()
 
-bot = EdgeGPT.Chatbot( cookie_path = cookies )
 loop = EdgeGPT.asyncio.get_event_loop()
 loop_thread = threading.Thread( target = loop.run_forever )
 loop_thread.start()
 
-the_text = ""
-the_text_old = ""
-the_chat_text = ""
+the_text = the_text_old = the_chat_text = ""
+
+def log_time() :
+    with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
+        Now_time = time.strftime( "%Y-%m-%d %H:%M:%S" , time.localtime() )
+        File.write( f"""\n___\n\n# `{Now_time}`\n""" )
+        logging.info( f"Log now time {Now_time}" )
 
 def reset( *args ) :
     global bot , loop , loop_thread
@@ -85,15 +96,13 @@ def Bing_s_message( future ):
     global text , can_chat , the_text_old
     try :
         message = future.result() ["item"] ["messages"] [1] ["adaptiveCards"] [0] ["body"] [0] ["text"]
-        with open( File_name , "a" , encoding = "utf-8" ) as File :
+        with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
             File.write( f"""\n## `Bing`\n\n___\n\n{message}""" )
         add_chat_message( f"{message}" )
         message_user()
-    except Exception as error :
-        print( '=' * 60 )
+    except Exception :
         traceback.print_exc()
-        print( '=' * 60 )
-        tkmsg.showerror( lang.get( "wrong" ) , lang.get( "network_error_message" ) )
+        tkmsg.showerror( lang.get( "wrong" ) , lang.get( "some_error" ) )
         text.insert( tk.END , the_text_old )
     can_chat = True
 
@@ -107,7 +116,7 @@ def send( *args ):
         tkmsg.showinfo( lang.get( "info" ) , lang.get( "words_too_more" ) )
     elif len( the_text ) <= 2000 and can_chat :
         can_chat = False
-        with open( File_name , "a" , encoding = "utf-8" ) as File :
+        with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
             File.write( f"""\n___\n\n## `User`\n\n___\n\n{the_text}\n\n___\n""" )
 
         add_chat_message( f"{the_text}" )
@@ -124,8 +133,8 @@ async def ask( *args ) : return await bot.ask( prompt = the_text )
 
 chat_text = tkinter.scrolledtext.ScrolledText(
     root ,
-    height = root.winfo_height() ,
-    width = root.winfo_width() ,
+    height = 10**5 ,
+    width = 10**5 ,
     state = tk.DISABLED ,
     tabs = ( "1c" ) ,
     undo = True ,
@@ -137,15 +146,15 @@ message_user()
 
 text = tkinter.scrolledtext.ScrolledText(
     root ,
-    width = root.winfo_width() ,
+    width = 10**5 ,
     tabs = ( "1c" ) ,
     undo = True ,
     height = 5,
     font = font
     )
 
-text.pack(side=tk.BOTTOM , anchor=tk.SW)
-chat_text.pack(side=tk.TOP , anchor=tk.N)
+text.pack( side = tk.BOTTOM , anchor = tk.SW )
+chat_text.pack( side = tk.TOP , anchor = tk.N )
 
 text.bind( "<Shift-Return>" , send ) #绑定事件
 text.bind( "<F12>" , reset ) #绑定事件
@@ -153,9 +162,20 @@ text.bind( "<F9>" , send ) #绑定事件
 
 root.after( 1 , show_count )
 
+logging.info( "-" * 30 )
+logging.info( "'EdgeGPT-GUI' run" )
+logging.debug( f"'font' info [ {font} ]" )
+logging.debug( f"'cookies' file at '{os.path.abspath( cookies )}'" )
+logging.debug( f"'chat_logs' file at '{os.path.abspath( chat_logs )}'" )
+logging.debug( f"'logs' file at '{os.path.abspath( logs )}'" )
+
+log_time()
+
 root.mainloop()
 
 #关闭循环
 loop.call_soon_threadsafe( loop.stop )
-
 log_time()
+
+logging.info( "'EdgeGPT-GUI' stop" )
+logging.info( "-" * 30 )
