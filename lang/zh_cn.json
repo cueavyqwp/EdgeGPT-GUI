@@ -1,7 +1,7 @@
 {
     "network_error_message" : "网络错误\n可能是各种奇怪原因造成的\n你可以尝试试继续对话\n若还不行那请尝试重启程序" ,
-    "some_error" : "发现错误" ,
-    "can_not_to_read" : "无法正常读取 'cookies.json' \n看看是否忘记添加\n或有其它问题" ,
+    "some_error" : "发现错误 你可以在日志中找到它" ,
+    "can_not_to_read" : "无法正常读取cookie文件\n看看是否忘记添加\n或有其它问题" ,
     "help" : "@按F9发送@按F12来刷新@" ,
     "empty_content" : "禁止输入空内容" ,
     "words_too_more" : "超过2000字" ,

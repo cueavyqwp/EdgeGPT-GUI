@@ -1,7 +1,7 @@
 {
     "network_error_message" : "Network error.\nYou can try to continue.\nIf it still can't work, please try to restart this program." ,
-    "some_error" : "There have some error" ,
-    "can_not_to_read" : "Unable to read 'cookies.json' file" ,
+    "some_error" : "There have some error, you can see it at logs files" ,
+    "can_not_to_read" : "Unable to read cookie file" ,
     "help" : "@Pass F9 to send@Pass F12 to reload@" ,
     "empty_content" : "Do not enter empty content" ,
     "words_too_more" : "More than 2000 words" ,

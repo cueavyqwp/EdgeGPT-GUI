@@ -1,20 +1,21 @@
 import tkinter.messagebox as tkmsg
 import tkinter.scrolledtext
 import tkinter as tk
-import traceback
 import threading
+import traceback
+import warnings
 import logging
 import json
 import time
 import pip
 import os
 
-#=========================================
+#==================================#
 font = ( "Consolas" , 18 , "bold" )
 cookies = "cookies.json"
 chat_logs = "chat_logs"
 logs = "logs"
-#=========================================
+#==================================#
 
 file_name = os.path.join( str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) ) # 日志与聊天记录的文件名称
 logs_name = os.path.join( logs , file_name + ".log" )
@@ -28,18 +29,20 @@ logging.basicConfig(
     datefmt = "%Y-%m-%d %H:%M:%S"
     )
 
+logger = logging.getLogger( "EdgeGPT-GUI" )
+
 while 1 :
     try:
         import EdgeGPT #https://github.com/acheong08/EdgeGPT
         import langful
         break
     except:
-        logging.warning( "module not find" )
-        logging.info( "install 'langful'" )
+        logger.warning( "module not find" )
+        logger.info( "install 'langful'" )
         pip.main( [ "install" , "langful" ] )
-        logging.info( "install 'EdgeGPT'" )
+        logger.info( "install 'EdgeGPT'" )
         pip.main( [ "install" , "EdgeGPT" ] )
-        logging.info( "install finish" )
+        logger.info( "install finish" )
 
 if not os.path.exists( logs ) :
     os.mkdir( logs )
@@ -47,20 +50,22 @@ if not os.path.exists( chat_logs ) :
     os.mkdir( chat_logs )
 
 can_chat = True #确保用户不会在Bing回答时输入内容
+lang = langful.lang( change = "@" )
+run = True
 root = tk.Tk()
 root.geometry( "1200x800" )
 root.title( "EdgeGPT-GUI" )
 
-lang = langful.lang( change = "@" )
-
 try :
     bot = EdgeGPT.Chatbot( cookie_path = cookies )
 except json.decoder.JSONDecodeError :
-    logging.error( "can't to load cookie file" )
-    tkmsg.showerror( lang.str_replace( "wrong" ) , lang.get( "can_not_to_read" ) )
+    logger.error( "can't to load cookie file" )
+    tkmsg.showerror( lang.get( "wrong" ) , lang.get( "can_not_to_read" ) )
     quit()
 
-loop = EdgeGPT.asyncio.get_event_loop()
+warnings.simplefilter( "ignore" , DeprecationWarning ) # 防止出现警告
+with warnings.catch_warnings() :
+    loop = EdgeGPT.asyncio.get_event_loop()
 loop_thread = threading.Thread( target = loop.run_forever )
 loop_thread.start()
 
@@ -70,12 +75,12 @@ def log_time() :
     with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
         Now_time = time.strftime( "%Y-%m-%d %H:%M:%S" , time.localtime() )
         File.write( f"""\n___\n\n# `{Now_time}`\n""" )
-        logging.info( f"Log time [ {Now_time} ]" )
+        logger.info( f"Log time [ {Now_time} ]" )
 
 def reset( *args ) :
     global bot , loop , loop_thread
     if can_chat :
-        logging.info( f"open new topic" )
+        logger.info( f"open new topic" )
         bot = EdgeGPT.Chatbot( cookie_path = cookies )
         loop.call_soon_threadsafe( loop.stop )
         loop = EdgeGPT.asyncio.get_event_loop()
@@ -109,40 +114,43 @@ def Bing_s_message( future ):
         message_user()
     except Exception :
         traceback.print_exc()
-        error = traceback.format_exc()
-        logging.error(f"""
-        {'-'*30}
-        {error}
-        {'-'*30}
-        """)
         tkmsg.showerror( lang.get( "wrong" ) , lang.get( "some_error" ) )
         text.insert( tk.END , the_text_old )
     can_chat = True
 
 def send( *args ):
-    global can_chat , the_text_old
+    global the_text_old , can_chat
+
     if not can_chat :
         tkmsg.showinfo( lang.get( "info" ) , lang.get( "wait" ) )
+
     elif not the_text or "".join( the_text.split() ) == "" :
         tkmsg.showerror( lang.get( "wrong" ) , lang.get( "empty_content" ) )
+
     elif len( the_text ) > 2000 :
         tkmsg.showinfo( lang.get( "info" ) , lang.get( "words_too_more" ) )
+
     elif len( the_text ) <= 2000 and can_chat :
         can_chat = False
         with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
             File.write( f"""\n___\n\n## `User`\n\n___\n\n{the_text}\n\n___\n""" )
-
         add_chat_message( f"{the_text}" )
         add_chat_message( "\nBing:\n" )
         the_text_old = the_text
-        text.delete(0.0,"end")
+        text.delete( 0.0 , "end" )
         future = EdgeGPT.asyncio.run_coroutine_threadsafe( ask() , loop )
         future.add_done_callback( Bing_s_message )
+
+def close() :
+    global run
+    run = False
+    root.destroy()
 
 def message_user() :
     add_chat_message( "User:\n" )
 
-async def ask( *args ) : return await bot.ask( prompt = the_text )
+async def ask( *args ) :
+    return await bot.ask( prompt = the_text )
 
 paned = tk.PanedWindow( root, orient = tk.VERTICAL )
 paned.pack( fill = tk.BOTH, expand = True )
@@ -164,28 +172,37 @@ text = tkinter.scrolledtext.ScrolledText(
 paned.add( chat_text )
 paned.add( text )
 
-text.bind( "<Shift-Return>" , send ) #绑定事件
-text.bind( "<F12>" , reset ) #绑定事件
-text.bind( "<F9>" , send ) #绑定事件
+text.bind( "<Shift-Return>" , send )
+text.bind( "<Control-s>" , send )
+text.bind( "<F12>" , reset )
+text.bind( "<F9>" , send )
 
 root.after( 1 , show_count )
 
-logging.info( "-" * 30 )
-logging.info( "'EdgeGPT-GUI' run" )
-logging.debug( f"'font' info [ {font} ]" )
-logging.debug( f"'cookies' file at '{os.path.abspath( cookies )}'" )
-logging.debug( f"'chat_logs' file at '{os.path.abspath( chat_logs )}'" )
-logging.debug( f"'logs' file at '{os.path.abspath( logs )}'" )
+logger.info( "-" * 30 )
+logger.info( "'EdgeGPT-GUI' run" )
+logger.debug( f"'font' info [ {font} ]" )
+logger.debug( f"'cookies' file at '{os.path.abspath( cookies )}'" )
+logger.debug( f"'chat_logs' file at '{os.path.abspath( chat_logs )}'" )
+logger.debug( f"'logs' file at '{os.path.abspath( logs )}'" )
 
 log_time()
-add_chat_message( lang.replace( "help" , [ f"{ '-' * 60 }\n" , "\n" , f"\n{ '-' * 60 }" ] ) + "\n" )
 message_user()
+root.protocol( "WM_DELETE_WINDOW" , close )
 
-root.mainloop()
+while run :
+    try :
+        root.mainloop()
+    except :
+        logger.error( "The program abnormally exits" )
+        error = traceback.format_exc()
+        logger.error( "-" * 30 )
+        logger.error( error )
+        logger.error( "-" * 30 )
 
 #关闭循环
 loop.call_soon_threadsafe( loop.stop )
 log_time()
 
-logging.info( "'EdgeGPT-GUI' stop" )
-logging.info( "-" * 30 )
+logger.info( "'EdgeGPT-GUI' stop" )
+logger.info( "-" * 30 )
