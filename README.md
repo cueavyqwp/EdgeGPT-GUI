@@ -42,6 +42,12 @@
 - 点击最右边的 `Export` -> `Export as JSON` 按钮 (cookie将会保存到你的剪切板里)
 - 把你的cookie内容从剪切板中粘贴到 `cookies.json` 文件里
 
+### Linux
+
+安装`tkinter` `sudo apt install python3-tk`
+
+安装`pip` `sudo apt install python3-pip`
+
 ### 安装模块
 
 - 按理来说运行程序时会自动下载缺失模块
