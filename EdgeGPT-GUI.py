@@ -141,15 +141,12 @@ chat_text = tkinter.scrolledtext.ScrolledText(
     font = font
     )
 
-add_chat_message( lang.replace( "help" , [ f"{ '-' * 60 }\n" , "\n" , f"\n{ '-' * 60 }" ] ) + "\n" )
-message_user()
-
 text = tkinter.scrolledtext.ScrolledText(
     root ,
     width = 10**5 ,
     tabs = ( "1c" ) ,
     undo = True ,
-    height = 5,
+    height = 5 ,
     font = font
     )
 
@@ -170,6 +167,8 @@ logging.debug( f"'chat_logs' file at '{os.path.abspath( chat_logs )}'" )
 logging.debug( f"'logs' file at '{os.path.abspath( logs )}'" )
 
 log_time()
+add_chat_message( lang.replace( "help" , [ f"{ '-' * 60 }\n" , "\n" , f"\n{ '-' * 60 }" ] ) + "\n" )
+message_user()
 
 root.mainloop()
 
