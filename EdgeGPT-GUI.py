@@ -9,31 +9,12 @@ import time
 import pip
 import os
 
-while 1 :
-    try:
-        import EdgeGPT #https://github.com/acheong08/EdgeGPT
-        import langful
-        break
-    except:
-        pip.main( [ "install" , "langful" ] )
-        pip.main( [ "install" , "EdgeGPT" ] )
-
 #=========================================
 font = ( "Consolas" , 18 , "bold" )
 cookies = "cookies.json"
 chat_logs = "chat_logs"
 logs = "logs"
 #=========================================
-
-if not os.path.exists( logs ) :
-    os.mkdir( logs )
-if not os.path.exists( chat_logs ) :
-    os.mkdir( chat_logs )
-
-can_chat = True #确保用户不会在Bing回答时输入内容
-root = tk.Tk()
-root.geometry( "1200x800" )
-root.title( "EdgeGPT-GUI" )
 
 file_name = os.path.join( str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) ) # 日志与聊天记录的文件名称
 logs_name = os.path.join( logs , file_name + ".log" )
@@ -47,12 +28,37 @@ logging.basicConfig(
     datefmt = "%Y-%m-%d %H:%M:%S"
     )
 
+while 1 :
+    try:
+        import EdgeGPT #https://github.com/acheong08/EdgeGPT
+        import langful
+        break
+    except:
+        logging.warning( "module not find" )
+        logging.info( "install 'langful'" )
+        pip.main( [ "install" , "langful" ] )
+        logging.info( "install 'EdgeGPT'" )
+        pip.main( [ "install" , "EdgeGPT" ] )
+        logging.info( "install finish" )
+
+if not os.path.exists( logs ) :
+    os.mkdir( logs )
+if not os.path.exists( chat_logs ) :
+    os.mkdir( chat_logs )
+
+can_chat = True #确保用户不会在Bing回答时输入内容
+root = tk.Tk()
+root.geometry( "1200x800" )
+root.title( "EdgeGPT-GUI" )
+
 lang = langful.lang( change = "@" )
 
 try :
     bot = EdgeGPT.Chatbot( cookie_path = cookies )
 except json.decoder.JSONDecodeError :
+    logging.error( "can't to load cookie file" )
     tkmsg.showerror( lang.str_replace( "wrong" ) , lang.get( "can_not_to_read" ) )
+    quit()
 
 loop = EdgeGPT.asyncio.get_event_loop()
 loop_thread = threading.Thread( target = loop.run_forever )
@@ -64,11 +70,12 @@ def log_time() :
     with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
         Now_time = time.strftime( "%Y-%m-%d %H:%M:%S" , time.localtime() )
         File.write( f"""\n___\n\n# `{Now_time}`\n""" )
-        logging.info( f"Log now time {Now_time}" )
+        logging.info( f"Log time [ {Now_time} ]" )
 
 def reset( *args ) :
     global bot , loop , loop_thread
     if can_chat :
+        logging.info( f"open new topic" )
         bot = EdgeGPT.Chatbot( cookie_path = cookies )
         loop.call_soon_threadsafe( loop.stop )
         loop = EdgeGPT.asyncio.get_event_loop()
@@ -102,6 +109,12 @@ def Bing_s_message( future ):
         message_user()
     except Exception :
         traceback.print_exc()
+        error = traceback.format_exc()
+        logging.error(f"""
+        {'-'*30}
+        {error}
+        {'-'*30}
+        """)
         tkmsg.showerror( lang.get( "wrong" ) , lang.get( "some_error" ) )
         text.insert( tk.END , the_text_old )
     can_chat = True
@@ -131,11 +144,11 @@ def message_user() :
 
 async def ask( *args ) : return await bot.ask( prompt = the_text )
 
+paned = tk.PanedWindow( root, orient = tk.VERTICAL )
+paned.pack( fill = tk.BOTH, expand = True )
+
 chat_text = tkinter.scrolledtext.ScrolledText(
     root ,
-    height = 10**5 ,
-    width = 10**5 ,
-    state = tk.DISABLED ,
     tabs = ( "1c" ) ,
     undo = True ,
     font = font
@@ -143,15 +156,13 @@ chat_text = tkinter.scrolledtext.ScrolledText(
 
 text = tkinter.scrolledtext.ScrolledText(
     root ,
-    width = 10**5 ,
     tabs = ( "1c" ) ,
     undo = True ,
-    height = 5 ,
     font = font
     )
 
-text.pack( side = tk.BOTTOM , anchor = tk.SW )
-chat_text.pack( side = tk.TOP , anchor = tk.N )
+paned.add( chat_text )
+paned.add( text )
 
 text.bind( "<Shift-Return>" , send ) #绑定事件
 text.bind( "<F12>" , reset ) #绑定事件
