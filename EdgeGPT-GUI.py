@@ -17,19 +17,24 @@ chat_logs = "chat_logs"
 logs = "logs"
 #==================================#
 
-file_name = os.path.join( str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) ) # 日志与聊天记录的文件名称
+file_name = os.path.join( str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) )
 logs_name = os.path.join( logs , file_name + ".log" )
 chat_logs_name = os.path.join( chat_logs , file_name + ".md" )
 
-logging.basicConfig(
-    filename = logs_name ,
-    filemode = "a" ,
-    level = logging.NOTSET ,
-    format = "[%(asctime)s] [%(levelname)s] %(message)s" ,
-    datefmt = "%Y-%m-%d %H:%M:%S"
-    )
-
 logger = logging.getLogger( "EdgeGPT-GUI" )
+logger.setLevel( logging.DEBUG )
+
+formatter = logging.Formatter( "[%(asctime)s] [%(levelname)s] %(message)s" , "%Y-%m-%d %H:%M:%S" )
+
+file_log = logging.FileHandler( logs_name )
+file_log.setLevel( logging.DEBUG )
+file_log.setFormatter(formatter)
+logger.addHandler(file_log)
+
+log = logging.StreamHandler()
+log.setLevel( logging.DEBUG )
+log.setFormatter(formatter)
+logger.addHandler(log)
 
 while 1 :
     try:
@@ -51,7 +56,6 @@ if not os.path.exists( chat_logs ) :
 
 can_chat = True #确保用户不会在Bing回答时输入内容
 lang = langful.lang( change = "@" )
-run = True
 root = tk.Tk()
 root.geometry( "1200x800" )
 root.title( "EdgeGPT-GUI" )
@@ -71,10 +75,21 @@ loop_thread.start()
 
 the_text = the_text_old = the_chat_text = ""
 
+with open( "format.md" , encoding = "utf-8" ) as f :
+    file = f.read()
+    md_texts = {}
+    md_texts[ "user" ] = file.split("<!--User-->")[1][1:-1]
+    md_texts[ "bing" ] = file.split("<!--Bing-->")[1][1:-1]
+    md_texts[ "time" ] = file.split("<!--Time-->")[1][1:-1]
+
+def md_text( key , value ) :
+    i = md_texts[ key ].split( "<!--value-->" )
+    return i[0] + value + i[1] 
+
 def log_time() :
     with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
         Now_time = time.strftime( "%Y-%m-%d %H:%M:%S" , time.localtime() )
-        File.write( f"""\n___\n\n# `{Now_time}`\n""" )
+        File.write( md_text( "time" , Now_time ) )
         logger.info( f"Log time [ {Now_time} ]" )
 
 def reset( *args ) :
@@ -109,7 +124,7 @@ def Bing_s_message( future ):
     try :
         message = future.result() ["item"] ["messages"] [1] ["adaptiveCards"] [0] ["body"] [0] ["text"]
         with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
-            File.write( f"""\n## `Bing`\n\n___\n\n{message}""" )
+            File.write( md_text( "bing" , message ) )
         add_chat_message( f"{message}" )
         message_user()
     except Exception :
@@ -133,7 +148,7 @@ def send( *args ):
     elif len( the_text ) <= 2000 and can_chat :
         can_chat = False
         with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
-            File.write( f"""\n___\n\n## `User`\n\n___\n\n{the_text}\n\n___\n""" )
+            File.write( md_text( "user" , the_text ) )
         add_chat_message( f"{the_text}" )
         add_chat_message( "\nBing:\n" )
         the_text_old = the_text
@@ -142,9 +157,11 @@ def send( *args ):
         future.add_done_callback( Bing_s_message )
 
 def close() :
-    global run
-    run = False
     root.destroy()
+    loop.call_soon_threadsafe( loop.stop ) # 关闭循环
+    log_time()
+    logger.info( "'EdgeGPT-GUI' stop" )
+    logger.info( "-" * 30 )
 
 def message_user() :
     add_chat_message( "User:\n" )
@@ -174,9 +191,13 @@ paned.add( text )
 
 text.bind( "<Shift-Return>" , send )
 text.bind( "<Control-s>" , send )
-text.bind( "<F12>" , reset )
 text.bind( "<F9>" , send )
 
+text.bind( "<Control-r>" , reset )
+text.bind( "<Control-n>" , reset )
+text.bind( "<F12>" , reset )
+
+root.protocol( "WM_DELETE_WINDOW" , close )
 root.after( 1 , show_count )
 
 logger.info( "-" * 30 )
@@ -188,21 +209,13 @@ logger.debug( f"'logs' file at '{os.path.abspath( logs )}'" )
 
 log_time()
 message_user()
-root.protocol( "WM_DELETE_WINDOW" , close )
 
-while run :
-    try :
-        root.mainloop()
-    except :
-        logger.error( "The program abnormally exits" )
-        error = traceback.format_exc()
-        logger.error( "-" * 30 )
-        logger.error( error )
-        logger.error( "-" * 30 )
-
-#关闭循环
-loop.call_soon_threadsafe( loop.stop )
-log_time()
-
-logger.info( "'EdgeGPT-GUI' stop" )
-logger.info( "-" * 30 )
+try :
+    root.mainloop()
+except :
+    logger.error( "The program abnormally exits" )
+    error = traceback.format_exc()[:-1]
+    logger.error( f"{'-' * 30}\n{error}" )
+    logger.error( "-" * 30 )
+    tkmsg.showerror( lang.get( "wrong" ) , error )
+    close()
