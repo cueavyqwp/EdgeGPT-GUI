@@ -122,10 +122,12 @@ def add_chat_message( message , enter = True ): #往聊天内容里添加内容
 def Bing_s_message( future ):
     global text , can_chat , the_text_old
     try :
-        message = future.result() ["item"] ["messages"] [1] ["adaptiveCards"] [0] ["body"] [0] ["text"]
+        data = future.result()
+        # print(data)
+        message = data["item"] ["messages"] [4] ["text"]
         with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
             File.write( md_text( "bing" , message ) )
-        add_chat_message( f"{message}" )
+        add_chat_message( f"{message}\n" )
         message_user()
     except Exception :
         traceback.print_exc()
