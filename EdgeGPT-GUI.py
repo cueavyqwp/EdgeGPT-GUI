@@ -124,7 +124,7 @@ def Bing_s_message( future ):
     try :
         data = future.result()
         # print(data)
-        message = data["item"] ["messages"] [4] ["text"]
+        message = data["item"]["messages"][1]["text"]
         with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
             File.write( md_text( "bing" , message ) )
         add_chat_message( f"{message}\n" )
