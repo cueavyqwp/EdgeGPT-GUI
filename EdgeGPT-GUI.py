@@ -21,6 +21,11 @@ file_name = os.path.join( str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) 
 logs_name = os.path.join( logs , file_name + ".log" )
 chat_logs_name = os.path.join( chat_logs , file_name + ".md" )
 
+if not os.path.exists( logs ) :
+    os.mkdir( logs )
+if not os.path.exists( chat_logs ) :
+    os.mkdir( chat_logs )
+
 logger = logging.getLogger( "EdgeGPT-GUI" )
 logger.setLevel( logging.DEBUG )
 
@@ -48,11 +53,6 @@ while 1 :
         logger.info( "install 'EdgeGPT'" )
         pip.main( [ "install" , "EdgeGPT" ] )
         logger.info( "install finish" )
-
-if not os.path.exists( logs ) :
-    os.mkdir( logs )
-if not os.path.exists( chat_logs ) :
-    os.mkdir( chat_logs )
 
 can_chat = True #确保用户不会在Bing回答时输入内容
 lang = langful.lang( change = "@" )
@@ -168,7 +168,7 @@ def close() :
 def message_user() :
     add_chat_message( "User:\n" )
 
-async def ask( *args ) :
+async def ask() :
     return await bot.ask( prompt = the_text )
 
 paned = tk.PanedWindow( root, orient = tk.VERTICAL )
