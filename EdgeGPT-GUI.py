@@ -15,6 +15,7 @@ font = ( "Consolas" , 18 , "bold" )
 cookies = "cookies.json"
 chat_logs = "chat_logs"
 logs = "logs"
+save_logs_file = True
 #==================================#
 
 file_name = os.path.join( str( time.strftime( "%Y-%m-%d" , time.localtime() ) ) )
@@ -31,10 +32,11 @@ logger.setLevel( logging.DEBUG )
 
 formatter = logging.Formatter( "[%(asctime)s] [%(levelname)s] %(message)s" , "%Y-%m-%d %H:%M:%S" )
 
-file_log = logging.FileHandler( logs_name )
-file_log.setLevel( logging.DEBUG )
-file_log.setFormatter(formatter)
-logger.addHandler(file_log)
+if save_logs_file :
+    file_log = logging.FileHandler( logs_name , encoding = "utf-8" )
+    file_log.setLevel( logging.DEBUG )
+    file_log.setFormatter(formatter)
+    logger.addHandler(file_log)
 
 log = logging.StreamHandler()
 log.setLevel( logging.DEBUG )
@@ -80,17 +82,19 @@ with open( "format.md" , encoding = "utf-8" ) as f :
     md_texts = {}
     md_texts[ "user" ] = file.split("<!--User-->")[1][1:-1]
     md_texts[ "bing" ] = file.split("<!--Bing-->")[1][1:-1]
-    md_texts[ "time" ] = file.split("<!--Time-->")[1][1:-1]
+    md_texts[ "start" ] = file.split("<!--Time_start-->")[1][1:-1]
+    md_texts[ "reset" ] = file.split("<!--Time_reset-->")[1][1:-1]
+    md_texts[ "end" ] = file.split("<!--Time_end-->")[1][1:-1]
 
 def md_text( key , value ) :
     i = md_texts[ key ].split( "<!--value-->" )
     return i[0] + value + i[1] 
 
-def log_time() :
+def log_time( type ) :
     with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
         Now_time = time.strftime( "%Y-%m-%d %H:%M:%S" , time.localtime() )
-        File.write( md_text( "time" , Now_time ) )
-        logger.info( f"Log time [ {Now_time} ]" )
+        File.write( md_text( type , Now_time ) )
+        logger.info( f"Log time [{type}] [ {Now_time} ]" )
 
 def reset( *args ) :
     global bot , loop , loop_thread
@@ -101,9 +105,12 @@ def reset( *args ) :
         loop = EdgeGPT.asyncio.get_event_loop()
         loop_thread = threading.Thread( target = loop.run_forever )
         loop_thread.start()
-        add_chat_message( lang.replace( "new_topic" , [ f"{ '=' * 60 }\n" , f"\n{ '=' * 60 }\n" ] ) )
+        chat_text.config( state = tk.NORMAL )
+        chat_text.delete( "0.0" , tk.END )
+        chat_text.config( state = tk.DISABLED )
+        chat_text.see( tk.END )
         message_user()
-        log_time()
+        log_time( "reset" )
     else :
         tkmsg.showinfo( lang.get( "info" ) , lang.get( "wait" ) )
 
@@ -123,14 +130,24 @@ def Bing_s_message( future ):
     global text , can_chat , the_text_old
     try :
         data = future.result()
-        # print(data)
         message = data["item"]["messages"][1]["text"]
+        suggested_responses = data["item"]["messages"][1]["suggestedResponses"]
         with open( chat_logs_name , "a" , encoding = "utf-8" ) as File :
             File.write( md_text( "bing" , message ) )
         add_chat_message( f"{message}\n" )
+        logger.info("Finish to get message")
+        if len(suggested_responses) :
+            logger.info( "-" * 30 )
+            for i in suggested_responses :
+                logger.info(i[ "text" ])
+            logger.info( "-" * 30 )
         message_user()
-    except Exception :
-        traceback.print_exc()
+    except :
+        logger.error("Fail to get message")
+        error = traceback.format_exc()[:-1]
+        logger.error( f"{'-' * 30}\n{error}" )
+        logger.error( "-" * 30 )
+        logger.debug(data)
         tkmsg.showerror( lang.get( "wrong" ) , lang.get( "some_error" ) )
         text.insert( tk.END , the_text_old )
     can_chat = True
@@ -161,7 +178,7 @@ def send( *args ):
 def close() :
     root.destroy()
     loop.call_soon_threadsafe( loop.stop ) # 关闭循环
-    log_time()
+    log_time( "end" )
     logger.info( "'EdgeGPT-GUI' stop" )
     logger.info( "-" * 30 )
 
@@ -209,7 +226,7 @@ logger.debug( f"'cookies' file at '{os.path.abspath( cookies )}'" )
 logger.debug( f"'chat_logs' file at '{os.path.abspath( chat_logs )}'" )
 logger.debug( f"'logs' file at '{os.path.abspath( logs )}'" )
 
-log_time()
+log_time( "start" )
 message_user()
 
 try :

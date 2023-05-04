@@ -1,22 +1,34 @@
 <!--User-->
-# `User`
+## `User`
 
 <!--value-->
 
 
 <!--User-->
 <!--Bing-->
-# `Bing`
+## `Bing`
 
 <!--value-->
 
 <!--Bing-->
-<!--Time-->
+<!--Time_start-->
 
 ---
 
-# `<!--value-->`
+# [`<!--value-->`] Chat start
+
+
+<!--Time_start-->
+<!--Time_reset-->
 
 ---
+# [`<!--value-->`] Chat reset
 
-<!--Time-->
+
+<!--Time_reset-->
+<!--Time_end-->
+
+# [`<!--value-->`] Chat end
+
+
+<!--Time_end-->

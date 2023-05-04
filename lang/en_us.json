@@ -5,7 +5,6 @@
     "help" : "@Pass F9 to send@Pass F12 to reload@" ,
     "empty_content" : "Do not enter empty content" ,
     "words_too_more" : "More than 2000 words" ,
-    "new_topic" : "@new topic@" ,
     "wait" : "Please wait" ,
     "wrong" : "Wrong" ,
     "info" : "Info" ,
