@@ -45,8 +45,8 @@ logger.addHandler(log)
 
 while 1 :
     try:
-        import EdgeGPT #https://github.com/acheong08/EdgeGPT
-        import langful
+        import EdgeGPT # https://github.com/acheong08/EdgeGPT
+        import langful # https://github.com/cueavy/langful
         break
     except:
         logger.warning( "module not find" )
@@ -56,7 +56,7 @@ while 1 :
         pip.main( [ "install" , "EdgeGPT" ] )
         logger.info( "install finish" )
 
-can_chat = True #确保用户不会在Bing回答时输入内容
+can_chat = True # 确保用户不会在Bing回答时输入内容
 lang = langful.lang( change = "@" )
 root = tk.Tk()
 root.geometry( "1200x800" )
