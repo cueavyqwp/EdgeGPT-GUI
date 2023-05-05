@@ -31,7 +31,7 @@
 ### 要求
 
 - python 3.8+
-- 通过 [候补名单](http://bing.com/chat)
+- ~~通过 [候补名单](http://bing.com/chat)~~(bing现已开启公测)
 - ~~网络代理 具体见 [#178](https://github.com/acheong08/EdgeGPT/issues/178)~~(貌似现在不需要了)
 
 ### 获取Cookie文件
