@@ -12,7 +12,7 @@ import os
 
 #===================================#
 font = ( "Consolas" , 18 , "bold" ) # 自定义字体
-cookies = "cookies.json"            # cookies文件位置 
+cookies_path = "cookies.json"       # cookies文件位置 
 chat_logs = "chat_logs"             # 聊天记录位置
 logs = "logs"                       # 日志文件位置
 save_logs_file = True               # 是否保存日志
@@ -65,7 +65,9 @@ root.geometry( "1200x800" )
 root.title( "EdgeGPT-GUI" )
 
 try :
-    bot = EdgeGPT.Chatbot( cookie_path = cookies )
+    with open( cookies_path ) as file :
+        cookie = json.load(file)
+    bot = EdgeGPT.Chatbot( cookies = cookie )
 except json.decoder.JSONDecodeError :
     logger.error( "can't to load cookie file" )
     tkmsg.showerror( lang.get( "wrong" ) , lang.get( "can_not_to_read" ) )
@@ -105,7 +107,7 @@ def reset( *args ) :
     global bot , loop , loop_thread
     if can_chat :
         logger.info( f"open new topic" )
-        bot = EdgeGPT.Chatbot( cookie_path = cookies )
+        bot = EdgeGPT.Chatbot( cookies = cookies_path )
         loop.call_soon_threadsafe( loop.stop )
         loop = EdgeGPT.asyncio.get_event_loop()
         loop_thread = threading.Thread( target = loop.run_forever )
@@ -252,7 +254,7 @@ root.after( 1 , show_count )
 logger.info( "-" * 30 )
 logger.info( "'EdgeGPT-GUI' run" )
 logger.debug( f"'font' info [ {font} ]" )
-logger.debug( f"'cookies' file at '{os.path.abspath( cookies )}'" )
+logger.debug( f"'cookies' file at '{os.path.abspath( cookies_path )}'" )
 logger.debug( f"'chat_logs' dir at '{os.path.abspath( chat_logs )}'" )
 logger.debug( f"'logs' dir at '{os.path.abspath( logs )}'" )
 
