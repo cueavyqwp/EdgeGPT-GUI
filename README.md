@@ -42,16 +42,32 @@
 - 点击最右边的 `Export` -> `Export as JSON` 按钮 (cookie将会保存到你的剪切板里)
 - 把你的cookie内容从剪切板中粘贴到 `cookies.json` 文件里
 
+<details>
+
+<summary>
+
 ### Linux
+
+</summary>
 
 安装`tkinter` `sudo apt install python3-tk`
 
 安装`pip` `sudo apt install python3-pip`
 
+</details>
+
+<details>
+
+<summary>
+
 ### 安装模块
+
+</summary>
 
 - 按理来说运行程序时会自动下载缺失模块
 - 当然 你也可以输入 `pip install -r ./requirements.txt` 来主动安装
+
+</details>
 
 ## 运行
 
@@ -67,16 +83,28 @@
 
 默认保存在`./logs`文件夹下
 
+<details>
+
+<summary>
+
+...
+
+</summary>
+
 >~~因代理的问题 所以可能会暂停更新~~
 
 >~~项目已寄 欢迎烧纸~~
 
 项目正常更新
 
-## 反馈
+</details>
+
+## 其它
 
 目前界面可能有些问题
 
 欢迎来到`Issues`提交问题 或 到`Pull requests`提交合并请求
 
 如果喜欢本项目的话 就点一下`Star`吧
+
+[![Star History Chart](https://api.star-history.com/svg?repos=cueavy/EdgeGPT-GUI&type=Date)](https://star-history.com/#cueavy/EdgeGPT-GUI&Date)
