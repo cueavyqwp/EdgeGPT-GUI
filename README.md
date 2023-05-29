@@ -99,10 +99,6 @@
 
 ## 其它
 
-目前界面可能有些问题
-
-欢迎来到`Issues`提交问题 或 到`Pull requests`提交合并请求
-
 如果喜欢本项目的话 就点一下`Star`吧
 
 [![Star History Chart](https://api.star-history.com/svg?repos=cueavy/EdgeGPT-GUI&type=Date)](https://star-history.com/#cueavy/EdgeGPT-GUI&Date)
