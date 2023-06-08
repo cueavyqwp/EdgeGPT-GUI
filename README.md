@@ -75,13 +75,17 @@
 
 ## 说明
 
+请注意`EdgeGPT`的版本应为`requirements.txt`中所要求的版本
+
 按 `F9` 进行发送
 
 按 `F12` 来开启新话题
 
 对话会以 `Markdown` 文件的形式进行储存
 
-默认保存在`./logs`文件夹下
+默认保存在`chat_logs`文件夹下
+
+日志将会保存在`logs`文件夹下
 
 <details>
 

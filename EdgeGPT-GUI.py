@@ -46,16 +46,14 @@ log.setFormatter(formatter)
 logger.addHandler(log)
 
 while 1 :
-    try:
+    try :
+        # from EdgeGPT import EdgeGPT
         import EdgeGPT # https://github.com/acheong08/EdgeGPT
         import langful # https://github.com/cueavy/langful
         break
-    except:
+    except ModuleNotFoundError :
         logger.warning( "module not find" )
-        logger.info( "install 'langful'" )
-        pip.main( [ "install" , "langful" ] )
-        logger.info( "install 'EdgeGPT'" )
-        pip.main( [ "install" , "EdgeGPT" ] )
+        pip.main( [ "install" , "-r" , "requirements.txt" ] )
         logger.info( "install finish" )
 
 can_chat = True # 确保用户不会在Bing回答时输入内容
@@ -153,14 +151,14 @@ def Bing_s_message( future ) :
                         file.write( f"""[{i+1}]: {links[i]["seeMoreUrl"]}\n""" )
             link_text = link_text[:-1]
             if show_links :
-                link_text = f"""{"-" * 30}\n{link_text}\n{"-" * 30}"""
+                link_text = f"""\n{"-" * 30}\n{link_text}\n{"-" * 30}"""
                 add_chat_message( link_text )
         elif show_links :
             add_chat_message()
         suggested_responses = data["item"]["messages"][1]["suggestedResponses"]
         with md_file() as file :
             file.write( md_text( "bing" , message ) )
-        if ( not show_suggest ) or ( not len( suggested_responses ) ) :
+        if not ( show_suggest and len( suggested_responses ) ) :
             message += "\n"
         add_chat_message( message )
         if len( suggested_responses ) :
@@ -172,16 +170,22 @@ def Bing_s_message( future ) :
             logger.info( "-" * 30 + "\n" + suggest_text )
             logger.info( "-" * 30 )
             if show_suggest :
-                suggest_text = f"""{"-" * 30}\n{suggest_text}\n{"-" * 30}"""
+                suggest_text = f"""{"-" * 30}\n{suggest_text}\n{"-" * 30}\n"""
                 add_chat_message( suggest_text )
         message_user()
     except :
         logger.error("Fail to get message")
         error = traceback.format_exc()[:-1]
+        tkmsg.showerror( lang.get( "wrong" ) , error )
         logger.error( f"{'-' * 30}\n{error}" )
         logger.error( "-" * 30 )
-        logger.debug(data)
-        tkmsg.showerror( lang.get( "wrong" ) , lang.get( "some_error" ) )
+        try :
+            logger.debug(data)
+        except :
+            logger.error("Chan't save chat data")
+            error = traceback.format_exc()[:-1]
+            logger.error( f"{'-' * 30}\n{error}" )
+            logger.error( "-" * 30 )
         text.insert( tk.END , the_text_old )
     can_chat = True
 
@@ -212,7 +216,7 @@ def close() :
     loop.call_soon_threadsafe( loop.stop ) # 关闭循环
     log_time( "end" )
     logger.info( "'EdgeGPT-GUI' stop" )
-    logger.info( "-" * 30 )
+    logger.info( "-" * 30 + "\n" )
 
 def message_user() :
     add_chat_message( "User:\n" )
