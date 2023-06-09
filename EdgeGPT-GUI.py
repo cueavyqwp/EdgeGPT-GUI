@@ -4,6 +4,7 @@ import tkinter as tk
 import threading
 import traceback
 import warnings
+import asyncio
 import logging
 import json
 import time
@@ -47,8 +48,8 @@ logger.addHandler(log)
 
 while 1 :
     try :
-        # from EdgeGPT import EdgeGPT
-        import EdgeGPT # https://github.com/acheong08/EdgeGPT
+        import EdgeGPT
+        # import EdgeGPT # https://github.com/acheong08/EdgeGPT
         import langful # https://github.com/cueavy/langful
         break
     except ModuleNotFoundError :
@@ -73,7 +74,7 @@ except json.decoder.JSONDecodeError :
 
 warnings.simplefilter( "ignore" , DeprecationWarning ) # 防止出现警告
 with warnings.catch_warnings() :
-    loop = EdgeGPT.asyncio.get_event_loop()
+    loop = asyncio.get_event_loop()
 loop_thread = threading.Thread( target = loop.run_forever )
 loop_thread.start()
 
@@ -107,7 +108,7 @@ def reset( *args ) :
         logger.info( f"open new topic" )
         bot = EdgeGPT.Chatbot( cookies = cookies_path )
         loop.call_soon_threadsafe( loop.stop )
-        loop = EdgeGPT.asyncio.get_event_loop()
+        loop = asyncio.get_event_loop()
         loop_thread = threading.Thread( target = loop.run_forever )
         loop_thread.start()
         chat_text.config( state = tk.NORMAL )
@@ -208,7 +209,7 @@ def send( *args ) :
             add_chat_message( "\nBing:\n" )
         the_text_old = the_text
         text.delete( 0.0 , "end" )
-        future = EdgeGPT.asyncio.run_coroutine_threadsafe( ask() , loop )
+        future = asyncio.run_coroutine_threadsafe( ask() , loop )
         future.add_done_callback( Bing_s_message )
 
 def close() :
