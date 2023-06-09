@@ -46,16 +46,21 @@ log.setLevel( logging.DEBUG )
 log.setFormatter(formatter)
 logger.addHandler(log)
 
-while 1 :
+for i in range(5,0,-1) :
     try :
         import EdgeGPT
-        # import EdgeGPT # https://github.com/acheong08/EdgeGPT
+        # from EdgeGPT import EdgeGPT # https://github.com/acheong08/EdgeGPT
         import langful # https://github.com/cueavy/langful
         break
-    except ModuleNotFoundError :
-        logger.warning( "module not find" )
+    except ModuleNotFoundError as e :
+        logger.warning( "-" * 30 + "\n" + str(e) )
+        logger.warning( "-" * 30 )
         pip.main( [ "install" , "-r" , "requirements.txt" ] )
         logger.info( "install finish" )
+        pass
+if ( i - 1 ) < 1 :
+    logger.error( "Can't to import or install the module" )
+    exit()
 
 can_chat = True # 确保用户不会在Bing回答时输入内容
 lang = langful.lang( change = "@" )
