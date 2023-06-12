@@ -27,12 +27,18 @@
 
 # 准备
 
-## 要求
-
 - python 3.8+
 - ~~通过 [候补名单](http://bing.com/chat)~~(bing现已开启公测)
 - ~~网络代理 具体见 [#178](https://github.com/acheong08/EdgeGPT/issues/178)~~(貌似现在不需要了)
+
+<details>
+
+<summary>
+
 - ~~获取Cookie文件~~
+
+</summary>
+
 - - 安装 cookie editor 扩展 [ [Chrome](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) | [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cookie-editor/) | [Edge](https://microsoftedge.microsoft.com/addons/detail/cookieeditor/neaplmfkghagebokkhpjpoebhdledlf) ]
 - - 访问 `bing.com`
 - - 点击插件图标
@@ -48,13 +54,15 @@
 
 <details>
 
-<summary>
-Linux
-</summary>
+<summary>Linux</summary>
 
-安装`tkinter` `sudo apt install python3-tk`
+安装`tkinter`
 
-安装`pip` `sudo apt install python3-pip`
+- `sudo apt install python3-tk`
+
+安装`pip`
+
+- `sudo apt install python3-pip`
 
 </details>
 
@@ -62,10 +70,9 @@ Linux
 
 直接运行 `python ./EdgeGPT-GUI.py` 或 `python3 ./EdgeGPT-GUI.py`
 
-
 # 说明
 
-请注意`EdgeGPT`的版本应为`requirements.txt`中所要求的版本 见 [#505](https://github.com/acheong08/EdgeGPT/issues/505)
+请注意`EdgeGPT`的版本应为[`requirements.txt`](./requirements.txt)中所要求的版本 见 [#505](https://github.com/acheong08/EdgeGPT/issues/505)
 
 按 `F9` 进行发送
 
@@ -79,9 +86,7 @@ Linux
 
 <details>
 
-<summary>
-...
-</summary>
+<summary>...</summary>
 
 >~~因代理的问题 所以可能会暂停更新~~
 
