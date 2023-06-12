@@ -27,6 +27,8 @@
 
 # 准备
 
+## 要求
+
 - python 3.8+
 - ~~通过 [候补名单](http://bing.com/chat)~~(bing现已开启公测)
 - ~~网络代理 具体见 [#178](https://github.com/acheong08/EdgeGPT/issues/178)~~(貌似现在不需要了)
@@ -34,35 +36,29 @@
 <details>
 
 <summary>
-
-- ~~获取Cookie文件~~
-
+<h2><del>获取Cookie文件</del></h2>
 </summary>
 
-- - 安装 cookie editor 扩展 [ [Chrome](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) | [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cookie-editor/) | [Edge](https://microsoftedge.microsoft.com/addons/detail/cookieeditor/neaplmfkghagebokkhpjpoebhdledlf) ]
-- - 访问 `bing.com`
-- - 点击插件图标
-- - 点击最右边的 `Export` -> `Export as JSON` 按钮 (cookie将会保存到你的剪切板里)
-- - 把你的cookie内容从剪切板中粘贴到 `cookies.json` 文件里
+- 安装 cookie editor 扩展 [ [Chrome](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) | [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cookie-editor/) | [Edge](https://microsoftedge.microsoft.com/addons/detail/cookieeditor/neaplmfkghagebokkhpjpoebhdledlf) ]
+- 访问 `bing.com`
+- 点击插件图标
+- 点击最右边的 `Export` -> `Export as JSON` 按钮 (cookie将会保存到你的剪切板里)
+- 把你的cookie内容从剪切板中粘贴到 `cookies.json` 文件里
 
 </details>
 
 ## 安装模块
 
-- 按理来说运行程序时会自动下载缺失模块
-- 当然 你也可以输入 `pip install -r ./requirements.txt` 来主动安装
+- `pip install -r ./requirements.txt`或`pip3 install -r ./requirements.txt`
 
 <details>
 
 <summary>Linux</summary>
 
-安装`tkinter`
-
-- `sudo apt install python3-tk`
-
-安装`pip`
+安装`pip`与`tkinter`
 
 - `sudo apt install python3-pip`
+- `sudo apt install python3-tk`
 
 </details>
 
