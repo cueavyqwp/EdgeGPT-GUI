@@ -19,7 +19,6 @@
     <a href="https://github.com/cueavy/EdgeGPT-GUI">
         <img alt="Github issues" src="https://img.shields.io/github/issues/cueavy/EdgeGPT-GUI?color=blue">
     </a>
-
 </p>
 
 </div>
@@ -34,7 +33,13 @@
 - ~~通过 [候补名单](http://bing.com/chat)~~(bing现已开启公测)
 - ~~网络代理 具体见 [#178](https://github.com/acheong08/EdgeGPT/issues/178)~~(貌似现在不需要了)
 
-### 获取Cookie文件
+<details>
+
+<summary>
+
+#### ~~获取Cookie文件~~
+
+</summary>
 
 - 安装 cookie editor 扩展 [ [Chrome](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) | [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cookie-editor/) | [Edge](https://microsoftedge.microsoft.com/addons/detail/cookieeditor/neaplmfkghagebokkhpjpoebhdledlf) ]
 - 访问 `bing.com`
@@ -42,11 +47,15 @@
 - 点击最右边的 `Export` -> `Export as JSON` 按钮 (cookie将会保存到你的剪切板里)
 - 把你的cookie内容从剪切板中粘贴到 `cookies.json` 文件里
 
+</details>
+
+### 安装模块
+
 <details>
 
 <summary>
 
-### Linux
+#### Linux
 
 </summary>
 
@@ -59,8 +68,6 @@
 <details>
 
 <summary>
-
-### 安装模块
 
 </summary>
 
@@ -75,7 +82,7 @@
 
 ## 说明
 
-请注意`EdgeGPT`的版本应为`requirements.txt`中所要求的版本
+请注意`EdgeGPT`的版本应为`requirements.txt`中所要求的版本 见 [#505](https://github.com/acheong08/EdgeGPT/issues/505)
 
 按 `F9` 进行发送
 
@@ -96,8 +103,6 @@
 >~~因代理的问题 所以可能会暂停更新~~
 
 >~~项目已寄 欢迎烧纸~~
-
-项目正常更新
 
 </details>
 
