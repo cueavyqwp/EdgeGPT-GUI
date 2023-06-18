@@ -31,7 +31,7 @@
 
 - python 3.8+
 - ~~通过 [候补名单](http://bing.com/chat)~~(bing现已开启公测)
-- ~~网络代理 具体见 [#178](https://github.com/acheong08/EdgeGPT/issues/178)~~(貌似现在不需要了)
+- 网络代理 具体见 [#178](https://github.com/acheong08/EdgeGPT/issues/178)~~(貌似现在不需要了)~~(需要)
 
 <details>
 
@@ -68,6 +68,10 @@
 
 # 说明
 
+~~因代理的问题 所以可能会暂停更新~~
+
+项目已寄 欢迎烧纸
+
 请注意`EdgeGPT`的版本应为[`requirements.txt`](./requirements.txt)中所要求的版本 见 [#505](https://github.com/acheong08/EdgeGPT/issues/505)
 
 按 `F9` 进行发送
@@ -80,7 +84,7 @@
 
 日志将会保存在`logs`文件夹下
 
-<details>
+<!-- <details>
 
 <summary>...</summary>
 
@@ -88,7 +92,7 @@
 
 >~~项目已寄 欢迎烧纸~~
 
-</details>
+</details> -->
 
 # 其它
 

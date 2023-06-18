@@ -76,6 +76,9 @@ except json.decoder.JSONDecodeError :
     logger.error( "can't to load cookie file" )
     tkmsg.showerror( lang.get( "wrong" ) , lang.get( "can_not_to_read" ) )
     quit()
+except EdgeGPT.httpx.ConnectError as e :
+    tkmsg.showerror( "错误" , f":(\n{e}\n这个错误主要是因为没开代理\n若没有代理,请放弃尝试" )
+    quit()
 
 warnings.simplefilter( "ignore" , DeprecationWarning ) # 防止出现警告
 with warnings.catch_warnings() :
